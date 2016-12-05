@@ -17,6 +17,7 @@ import com.example.webprog26.fchat.adapters.ViewPagerAdapter;
 import com.example.webprog26.fchat.fragments.FragmentChat;
 import com.example.webprog26.fchat.fragments.FragmentUsersOnline;
 import com.example.webprog26.fchat.interfaces.FirebaseChatListener;
+import com.example.webprog26.fchat.models.ChatMessage;
 import com.example.webprog26.fchat.models.User;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +30,10 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
     private static final String TAG = "MainActivity_TAG";
 
     private static final int SIGN_IN_REQUEST_CODE = 101;
+
+    private static final String FIREBASE_DATABASE_URL = "https://fir-2-e0ff8.firebaseio.com/";
+    private static final String FIREBASE_DATABASE_MESSAGES = FIREBASE_DATABASE_URL + "messages";
+    private static final String FIREBASE_DATABASE_USERS = FIREBASE_DATABASE_URL + "users";
 
     private Toolbar mToolbar;
     private TabLayout mTabLayout;
@@ -96,6 +101,10 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
                 AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        if(mUser != null){
+                            mUser.setUserOnline(false);
+                            onUserStatusChanged(mUser);
+                        }
                         startActivityForResult(AuthUI.getInstance()
                                 .createSignInIntentBuilder()
                                 .build(), SIGN_IN_REQUEST_CODE);
@@ -134,11 +143,12 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
     @Override
     public void onSendMessage(String text) {
         Log.i(TAG, "ready to send message " + text + " from " + mUser.getUserName());
-//        FirebaseDatabase.getInstance().getReferenceFromUrl()
+        FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_DATABASE_MESSAGES).push().setValue(new ChatMessage(text, mUser.getUserName()));
     }
 
     @Override
     public void onUserStatusChanged(User user) {
         Log.i(TAG, user.getUserName() + " status changed to " + user.isUserOnline());
+        FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_DATABASE_USERS).child(mUser.getUserName()).setValue(mUser);
     }
 }
