@@ -16,6 +16,7 @@ import com.example.webprog26.fchat.R;
 import com.example.webprog26.fchat.adapters.ViewPagerAdapter;
 import com.example.webprog26.fchat.fragments.FragmentChat;
 import com.example.webprog26.fchat.fragments.FragmentUsersOnline;
+import com.example.webprog26.fchat.models.User;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
+    private User mUser;
 
     private FragmentChat mFragmentChat;
     private FragmentUsersOnline mFragmentUsersOnline;
@@ -56,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     .createSignInIntentBuilder()
                     .build(), SIGN_IN_REQUEST_CODE);
         } else {
-            Log.i(TAG, "Welcome, " + FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            mUser = new User(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), true);
+            Log.i(TAG, "Welcome, " + mUser.getUserName());
             mFragmentChat.displayMessages();
         }
     }
@@ -97,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == SIGN_IN_REQUEST_CODE){
             if(resultCode == RESULT_OK){
+                mUser = new User(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), true);
+                Log.i(TAG, "Welcome, " + mUser.getUserName());
                 mFragmentChat.displayMessages();
             } else {
                 Toast.makeText(this, getResources().getString(R.string.unable_to_sign_in), Toast.LENGTH_LONG).show();

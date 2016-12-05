@@ -3,11 +3,13 @@ package com.example.webprog26.fchat.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.example.webprog26.fchat.R;
 
@@ -33,6 +35,14 @@ public class FragmentChat extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        FloatingActionButton btnSendChatMessage = (FloatingActionButton) view.findViewById(R.id.btnSend);
+        btnSendChatMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText etInputText = (EditText) view.findViewById(R.id.etInput);
+
+            }
+        });
     }
 
     public void displayMessages(){
