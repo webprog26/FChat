@@ -10,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import com.example.webprog26.fchat.R;
 import com.example.webprog26.fchat.interfaces.FirebaseChatListener;
+import com.firebase.ui.database.FirebaseListAdapter;
 
 /**
  * Created by webprog26 on 05.12.2016.
@@ -20,9 +22,14 @@ import com.example.webprog26.fchat.interfaces.FirebaseChatListener;
 
 public class FragmentChat extends Fragment {
 
+
     private static final String TAG = "FragmentChat";
-    private FirebaseChatListener mFirebaseChatListener;
+
+
     private EditText mEtInputText;
+
+    private FirebaseChatListener mFirebaseChatListener;
+    private ListView mListMessages;
 
     @Override
     public void onAttach(Context context) {
@@ -51,10 +58,13 @@ public class FragmentChat extends Fragment {
                 mEtInputText.setText("");
             }
         });
+        mListMessages = (ListView) view.findViewById(R.id.lvMessages);
+        displayMessages();
     }
 
     public void displayMessages(){
         Log.i(TAG, "displayMessages()");
+        mFirebaseChatListener.omMessagesRead(mListMessages);
     }
 
     @Override

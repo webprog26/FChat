@@ -7,9 +7,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.webprog26.fchat.R;
@@ -20,6 +24,7 @@ import com.example.webprog26.fchat.interfaces.FirebaseChatListener;
 import com.example.webprog26.fchat.models.ChatMessage;
 import com.example.webprog26.fchat.models.User;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -67,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
         } else {
             mUser = new User(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), true);
             Log.i(TAG, "Welcome, " + mUser.getUserName());
-            mFragmentChat.displayMessages();
         }
     }
 
@@ -150,5 +154,24 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
     public void onUserStatusChanged(User user) {
         Log.i(TAG, user.getUserName() + " status changed to " + user.isUserOnline());
         FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_DATABASE_USERS).child(mUser.getUserName()).setValue(mUser);
+    }
+
+    @Override
+    public void omMessagesRead(ListView listView) {
+        FirebaseListAdapter<ChatMessage> adapter = new FirebaseListAdapter<ChatMessage>(this, ChatMessage.class, R.layout.message_item, FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_DATABASE_MESSAGES)) {
+            @Override
+            protected void populateView(View v, ChatMessage model, int position) {
+                TextView messageText = (TextView) v.findViewById(R.id.tvMessageText);
+                TextView messageUser = (TextView) v.findViewById(R.id.tvMessageUser);
+                TextView messageTime = (TextView) v.findViewById(R.id.tvMessageTime);
+
+                messageText.setText(model.getText());
+                messageUser.setText(model.getUserName());
+
+                messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
+                        model.getMessageTime()));
+            }
+        };
+        listView.setAdapter(adapter);
     }
 }
