@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FChat</string>
+    <string name="chat">Chat</string>
+    <string name="users_online">Users online</string>
+    <string name="input_field_hint">Input</string>
+    <string name="sign_out">Sign out</string>
 </resources>
