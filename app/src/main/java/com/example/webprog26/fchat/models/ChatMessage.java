@@ -18,6 +18,7 @@ public class ChatMessage {
         this.messageTime = new Date().getTime();
     }
 
+    //Empty constructor in class-model is Firebase compulsory condition
     public ChatMessage() {
     }
 

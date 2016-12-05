@@ -61,8 +61,11 @@ public class FragmentChat extends Fragment {
         displayMessages();
     }
 
+    /**
+     * Calling host {@link android.app.Activity} onMessagesRead({@link ListView}) method
+     * to display chat messages
+     */
     public void displayMessages(){
-        Log.i(TAG, "displayMessages()");
         mFirebaseChatListener.onMessagesRead(mListViewMessages);
     }
 

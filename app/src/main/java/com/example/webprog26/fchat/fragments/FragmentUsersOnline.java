@@ -46,6 +46,10 @@ public class FragmentUsersOnline extends Fragment {
         displayUsersOnline();
     }
 
+    /**
+     * Calling host {@link android.app.Activity} onUsersStatusRead({@link ListView}) method
+     * to display users and their statuses
+     */
     public void displayUsersOnline(){
         mFirebaseChatListener.onUsersStatusRead(mListViewUsersOnline);
     }

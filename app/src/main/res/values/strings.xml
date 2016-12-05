@@ -2,6 +2,8 @@
     <string name="app_name">FChat</string>
     <string name="chat">Chat</string>
     <string name="users_online">Users online</string>
+    <string name="welcome">Welcome, %1$s</string>
+    <string name="bye">Bye, %1$s</string>
     <string name="input_field_hint">Input</string>
     <string name="sign_out">Sign out</string>
     <string name="unable_to_sign_in">Unable to sign in. Try again later</string>

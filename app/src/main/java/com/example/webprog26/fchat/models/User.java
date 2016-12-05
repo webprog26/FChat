@@ -14,6 +14,7 @@ public class User {
         this.isUserOnline = isUserOnline;
     }
 
+    //Empty constructor in class-model is Firebase compulsory condition
     public User() {
     }
 

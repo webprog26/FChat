@@ -65,13 +65,15 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
 
+        //If user is not an authentificated one, we providing this operation
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             startActivityForResult(AuthUI.getInstance()
                     .createSignInIntentBuilder()
                     .build(), SIGN_IN_REQUEST_CODE);
         } else {
+            //User is authentificated, greetings
             mUser = new User(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), true);
-            Log.i(TAG, "Welcome, " + mUser.getUserName());
+            Toast.makeText(this, getResources().getString(R.string.welcome, mUser.getUserName()), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -79,11 +81,16 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
     protected void onStart() {
         super.onStart();
         if(mUser != null){
+            //App is in foreground, so user status changes to "online"
             mUser.setUserOnline(true);
             onUserStatusChanged(mUser);
         }
     }
 
+    /**
+     * Setting up {@link ViewPager}, adding Fragments, create an instance of {@link ViewPagerAdapter} and setting it to {@link ViewPager}
+     * @param viewPager {@link ViewPager}
+     */
     private void setupViewPager(ViewPager viewPager){
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mFragmentChat, getResources().getString(R.string.chat));
@@ -101,11 +108,13 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.actionSignOut:
-                Log.i(TAG, "actionSignOut");
+                //Signing this user out
                 AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(mUser != null){
+                            Toast.makeText(MainActivity.this, getResources().getString(R.string.bye, mUser.getUserName()), Toast.LENGTH_LONG).show();
+                            //App may still be in foreground, but user status changes to "offline"
                             mUser.setUserOnline(false);
                             onUserStatusChanged(mUser);
                         }
@@ -125,8 +134,9 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
         if(requestCode == SIGN_IN_REQUEST_CODE){
             if(resultCode == RESULT_OK){
                 mUser = new User(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), true);
+                //App is in foreground, and user status changes to "online"
                 onUserStatusChanged(mUser);
-                Log.i(TAG, "Welcome, " + mUser.getUserName());
+                Toast.makeText(this, getResources().getString(R.string.welcome, mUser.getUserName()), Toast.LENGTH_LONG).show();
                 mFragmentChat.displayMessages();
                 mFragmentUsersOnline.displayUsersOnline();
             } else {
@@ -140,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
     protected void onStop() {
         super.onStop();
         if(mUser != null){
+            //App is in background, so user status changes to "online"
             mUser.setUserOnline(false);
             onUserStatusChanged(mUser);
         }
@@ -147,13 +158,11 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
 
     @Override
     public void onSendMessage(String text) {
-        Log.i(TAG, "ready to send message " + text + " from " + mUser.getUserName());
         FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_DATABASE_MESSAGES).push().setValue(new ChatMessage(text, mUser.getUserName()));
     }
 
     @Override
     public void onUserStatusChanged(User user) {
-        Log.i(TAG, user.getUserName() + " status changed to " + user.isUserOnline());
         FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_DATABASE_USERS).child(mUser.getUserName()).setValue(mUser);
     }
 
