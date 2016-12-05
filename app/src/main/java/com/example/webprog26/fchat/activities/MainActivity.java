@@ -16,13 +16,15 @@ import com.example.webprog26.fchat.R;
 import com.example.webprog26.fchat.adapters.ViewPagerAdapter;
 import com.example.webprog26.fchat.fragments.FragmentChat;
 import com.example.webprog26.fchat.fragments.FragmentUsersOnline;
+import com.example.webprog26.fchat.interfaces.FirebaseChatListener;
 import com.example.webprog26.fchat.models.User;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FirebaseChatListener{
 
     private static final String TAG = "MainActivity_TAG";
 
@@ -64,6 +66,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(mUser != null){
+            mUser.setUserOnline(true);
+            onUserStatusChanged(mUser);
+        }
+    }
+
     private void setupViewPager(ViewPager viewPager){
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mFragmentChat, getResources().getString(R.string.chat));
@@ -101,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == SIGN_IN_REQUEST_CODE){
             if(resultCode == RESULT_OK){
                 mUser = new User(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), true);
+                onUserStatusChanged(mUser);
                 Log.i(TAG, "Welcome, " + mUser.getUserName());
                 mFragmentChat.displayMessages();
             } else {
@@ -108,5 +120,25 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mUser != null){
+            mUser.setUserOnline(false);
+            onUserStatusChanged(mUser);
+        }
+    }
+
+    @Override
+    public void onSendMessage(String text) {
+        Log.i(TAG, "ready to send message " + text + " from " + mUser.getUserName());
+//        FirebaseDatabase.getInstance().getReferenceFromUrl()
+    }
+
+    @Override
+    public void onUserStatusChanged(User user) {
+        Log.i(TAG, user.getUserName() + " status changed to " + user.isUserOnline());
     }
 }

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.example.webprog26.fchat.R;
+import com.example.webprog26.fchat.interfaces.FirebaseChatListener;
 
 /**
  * Created by webprog26 on 05.12.2016.
@@ -20,10 +21,15 @@ import com.example.webprog26.fchat.R;
 public class FragmentChat extends Fragment {
 
     private static final String TAG = "FragmentChat";
+    private FirebaseChatListener mFirebaseChatListener;
+    private EditText mEtInputText;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if(context instanceof FirebaseChatListener){
+            mFirebaseChatListener = (FirebaseChatListener) context;
+        }
     }
 
     @Nullable
@@ -35,12 +41,14 @@ public class FragmentChat extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mEtInputText= (EditText) view.findViewById(R.id.etInput);
         FloatingActionButton btnSendChatMessage = (FloatingActionButton) view.findViewById(R.id.btnSend);
         btnSendChatMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText etInputText = (EditText) view.findViewById(R.id.etInput);
-
+                mFirebaseChatListener.onSendMessage(mEtInputText.getText().toString());
+                mEtInputText.setText("");
             }
         });
     }
@@ -52,5 +60,6 @@ public class FragmentChat extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        mFirebaseChatListener = null;
     }
 }
