@@ -14,7 +14,6 @@ import android.widget.ListView;
 
 import com.example.webprog26.fchat.R;
 import com.example.webprog26.fchat.interfaces.FirebaseChatListener;
-import com.firebase.ui.database.FirebaseListAdapter;
 
 /**
  * Created by webprog26 on 05.12.2016.
@@ -29,7 +28,7 @@ public class FragmentChat extends Fragment {
     private EditText mEtInputText;
 
     private FirebaseChatListener mFirebaseChatListener;
-    private ListView mListMessages;
+    private ListView mListViewMessages;
 
     @Override
     public void onAttach(Context context) {
@@ -58,13 +57,13 @@ public class FragmentChat extends Fragment {
                 mEtInputText.setText("");
             }
         });
-        mListMessages = (ListView) view.findViewById(R.id.lvMessages);
+        mListViewMessages = (ListView) view.findViewById(R.id.lvMessages);
         displayMessages();
     }
 
     public void displayMessages(){
         Log.i(TAG, "displayMessages()");
-        mFirebaseChatListener.omMessagesRead(mListMessages);
+        mFirebaseChatListener.onMessagesRead(mListViewMessages);
     }
 
     @Override

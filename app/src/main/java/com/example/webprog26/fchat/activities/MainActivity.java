@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
                 onUserStatusChanged(mUser);
                 Log.i(TAG, "Welcome, " + mUser.getUserName());
                 mFragmentChat.displayMessages();
+                mFragmentUsersOnline.displayUsersOnline();
             } else {
                 Toast.makeText(this, getResources().getString(R.string.unable_to_sign_in), Toast.LENGTH_LONG).show();
                 finish();
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
     }
 
     @Override
-    public void omMessagesRead(ListView listView) {
+    public void onMessagesRead(ListView listView) {
         FirebaseListAdapter<ChatMessage> adapter = new FirebaseListAdapter<ChatMessage>(this, ChatMessage.class, R.layout.message_item, FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_DATABASE_MESSAGES)) {
             @Override
             protected void populateView(View v, ChatMessage model, int position) {
@@ -170,6 +171,27 @@ public class MainActivity extends AppCompatActivity implements FirebaseChatListe
 
                 messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
                         model.getMessageTime()));
+            }
+        };
+        listView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onUsersStatusRead(ListView listView) {
+        FirebaseListAdapter<User> adapter = new FirebaseListAdapter<User>(this, User.class, R.layout.user_online_item, FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_DATABASE_USERS)) {
+            @Override
+            protected void populateView(View v, User model, int position) {
+                 TextView userOnlineName = (TextView) v.findViewById(R.id.tvUserOnline);
+                 TextView userStatus = (TextView) v.findViewById(R.id.tvUserStatus);
+
+                 userOnlineName.setText(model.getUserName());
+
+                 if(model.isUserOnline()){
+                     userStatus.setText(getResources().getString(R.string.online));
+                 } else {
+                    userStatus.setText(getResources().getString(R.string.offline));
+                 }
+
             }
         };
         listView.setAdapter(adapter);

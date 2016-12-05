@@ -10,8 +10,8 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/lvUsers"
+        android:id="@+id/lvUsersOnline"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:dividerHeight="@dimen/activity_vertical_margin"></ListView>
+        android:dividerHeight="@dimen/users_online_list_divider_height"></ListView>
 </RelativeLayout>
